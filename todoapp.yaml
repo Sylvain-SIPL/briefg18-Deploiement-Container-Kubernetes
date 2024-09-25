@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todoapp-deployment
+  labels:
+    app: django-todoapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: django-todoapp
+  template:
+    metadata:
+      labels:
+        app: django-todoapp
+    spec:
+      containers:
+        - name: django-todoapp
+          image: sylvain5929/django_todoapp:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DJANGO_SETTINGS_MODULE
+              value: "todoapp.settings"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todoapp-service
+spec:
+  type: LoadBalancer
+  loadBalancerIP: 135.236.123.213
+  selector:
+    app: django-todoapp
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
